@@ -1,4 +1,25 @@
 
+# Run the web app with Docker
+
+Docker builds the WAR inside a container, so Java and Maven do not need to be installed on your PC. Install and start Docker Desktop, then run these commands from the repository folder:
+
+```powershell
+docker build -t helloworld .
+docker run --rm -p 8080:8080 helloworld
+```
+
+Open http://localhost:8080/ in your browser. Stop the server with Ctrl+C in the terminal.
+
+# Deploy from Azure Pipelines
+
+The pipeline tests the project, builds and pushes a Docker image, then deploys it to Azure App Service for Containers. Before running it:
+
+1. Create an Azure Container Registry and a Linux Web App configured for a custom container. The web app needs an App Service plan that supports custom containers.
+2. Enable the web app's system-assigned managed identity, grant it the **AcrPull** role on the container registry, and configure the web app to use that identity when pulling from the registry.
+3. In Azure DevOps, create a Docker Registry service connection for the ACR and an Azure Resource Manager service connection with permission to deploy to the web app.
+4. Update the service connection names, registry hostname, and web app name in `azure-pipelines.yml`. Authorize both service connections for the pipeline.
+5. Push a change to `main` to build and deploy. Once the pipeline succeeds, browse to `https://<your-web-app-name>.azurewebsites.net/`.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
