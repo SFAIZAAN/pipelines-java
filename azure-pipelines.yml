@@ -1,4 +1,4 @@
-# Build, test, publish a container image, and deploy it to Azure App Service.
+# Build and test the Java project with Maven.
 
 trigger:
 - main
@@ -6,16 +6,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  imageRepository: helloworld
-  dockerRegistryServiceConnection: 'YOUR-ACR-SERVICE-CONNECTION'
-  azureSubscription: 'YOUR-AZURE-SERVICE-CONNECTION'
-  containerRegistry: 'YOUR-REGISTRY.azurecr.io'
-  webAppName: 'YOUR-WEB-APP-NAME'
-
 steps:
 - task: Maven@3
-  displayName: Test and package
+  displayName: Build and test
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
@@ -25,23 +18,3 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
-
-- task: Docker@2
-  displayName: Build and push container image
-  inputs:
-    command: buildAndPush
-    containerRegistry: '$(dockerRegistryServiceConnection)'
-    repository: '$(imageRepository)'
-    dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-    buildContext: '$(Build.SourcesDirectory)'
-    tags: |
-      $(Build.BuildId)
-      latest
-
-- task: AzureWebAppContainer@1
-  displayName: Deploy to Azure App Service
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    appName: '$(webAppName)'
-    containers: '$(containerRegistry)/$(imageRepository):$(Build.BuildId)'
-    appSettings: '-WEBSITES_PORT 8080'
