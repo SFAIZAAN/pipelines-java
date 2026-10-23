@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-junit-junit = "4.11"
+junit-junit = "4.13.2"
 
 [libraries]
 junit-junit = { module = "junit:junit", version.ref = "junit-junit" }
